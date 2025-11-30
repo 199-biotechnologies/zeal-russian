@@ -1,3 +1,9 @@
+export interface Variation {
+  russian: string;
+  transliteration: string;
+  nuance: string; // e.g., "more casual", "slang", "formal"
+}
+
 export interface Word {
   id: string;
   russian: string;
@@ -7,6 +13,11 @@ export interface Word {
   exampleTranslation: string;
   notes: string;
   category: Category;
+  // Optional: alternative ways to say the same thing
+  variations?: Variation[];
+  // Optional: IDs of words that naturally follow this one in conversation
+  respondsTo?: string[];  // What phrases this is a response to
+  responses?: string[];   // What phrases can respond to this
 }
 
 export type Category =
