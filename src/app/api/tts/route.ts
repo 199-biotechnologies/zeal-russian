@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Russian voice from ElevenLabs library
-const RUSSIAN_VOICE_ID = '4PwUjhxp2FJKNelwDGEk'; // Anatoly Zhiltsov - Russian male
-const MODEL_ID = 'eleven_flash_v2_5'; // Fast model with ~75ms latency
+// Use premade multilingual voice - George (supports Russian via multilingual model)
+const VOICE_ID = 'JBFqnCBsd6RMkjVDRZzb'; // George - premade male voice
+const MODEL_ID = 'eleven_multilingual_v2'; // Multilingual model with Russian support
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${RUSSIAN_VOICE_ID}`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
       {
         method: 'POST',
         headers: {
