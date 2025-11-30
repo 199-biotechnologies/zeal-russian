@@ -34,7 +34,11 @@ export type Category =
   | 'food'
   | 'travel'
   | 'shopping'
-  | 'romance';
+  | 'romance'
+  | 'patterns'
+  | 'verbs'
+  | 'connectors'
+  | 'jokes';
 
 export interface CategoryInfo {
   id: Category;

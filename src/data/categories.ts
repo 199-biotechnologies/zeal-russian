@@ -85,4 +85,28 @@ export const categories: CategoryInfo[] = [
     emoji: '❤️',
     description: 'Terms of endearment and dating',
   },
+  {
+    id: 'patterns',
+    name: 'Sentence Patterns',
+    emoji: '🧩',
+    description: 'Templates to build any sentence',
+  },
+  {
+    id: 'verbs',
+    name: 'Survival Verbs',
+    emoji: '🏃',
+    description: 'Essential verbs in common forms',
+  },
+  {
+    id: 'connectors',
+    name: 'Connectors & Fillers',
+    emoji: '🔗',
+    description: 'Link ideas and sound natural',
+  },
+  {
+    id: 'jokes',
+    name: 'Jokes & Humor',
+    emoji: '😂',
+    description: 'Popular Russian jokes and wit',
+  },
 ];
