@@ -1,4 +1,14 @@
 <svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" rx="100" fill="#dc2626"/>
-  <text x="256" y="320" font-family="system-ui, sans-serif" font-size="280" font-weight="bold" fill="white" text-anchor="middle">Р</text>
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444"/>
+      <stop offset="100%" style="stop-color:#dc2626"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#bgGrad)"/>
+  <!-- Speech bubble shape -->
+  <ellipse cx="256" cy="220" rx="180" ry="140" fill="white" opacity="0.95"/>
+  <polygon points="200,340 260,340 220,400" fill="white" opacity="0.95"/>
+  <!-- Cyrillic text inside bubble -->
+  <text x="256" y="255" font-family="system-ui, -apple-system, sans-serif" font-size="120" font-weight="700" fill="#dc2626" text-anchor="middle">Да!</text>
 </svg>

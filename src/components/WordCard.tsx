@@ -16,10 +16,12 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
   const [saved, setSaved] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [playingConversation, setPlayingConversation] = useState(false);
   const [showVariations, setShowVariations] = useState(false);
   const [showChain, setShowChain] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioCacheRef = useRef<Map<string, string>>(new Map());
+  const conversationAbortRef = useRef(false);
 
   useEffect(() => {
     setSaved(isWordSaved(word.id));
@@ -29,52 +31,108 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
   useEffect(() => {
     return () => {
       audioCacheRef.current.forEach((url) => URL.revokeObjectURL(url));
+      conversationAbortRef.current = true;
     };
   }, []);
+
+  const fetchAudio = async (text: string): Promise<string> => {
+    // Check cache first
+    const cachedUrl = audioCacheRef.current.get(text);
+    if (cachedUrl) return cachedUrl;
+
+    const response = await fetch('/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) throw new Error('TTS failed');
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    audioCacheRef.current.set(text, url);
+    return url;
+  };
+
+  const playAudioUrl = (url: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => resolve();
+      audio.onerror = () => reject(new Error('Playback failed'));
+      audio.play().catch(reject);
+    });
+  };
 
   const playAudio = useCallback(async (text: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
 
-    if (isLoading) return;
-
-    // Check cache first
-    const cachedUrl = audioCacheRef.current.get(text);
-    if (cachedUrl) {
-      const audio = new Audio(cachedUrl);
-      audio.play();
-      setIsPlaying(true);
-      audio.onended = () => setIsPlaying(false);
-      return;
-    }
+    if (isLoading || playingConversation) return;
 
     setIsLoading(true);
     try {
-      const response = await fetch('/api/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      });
-
-      if (!response.ok) throw new Error('TTS failed');
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      audioCacheRef.current.set(text, url);
-
-      const audio = new Audio(url);
-      audioRef.current = audio;
-
-      audio.onended = () => setIsPlaying(false);
-      audio.onerror = () => setIsPlaying(false);
-
-      await audio.play();
+      const url = await fetchAudio(text);
       setIsPlaying(true);
+      await playAudioUrl(url);
     } catch (error) {
       console.error('Audio playback error:', error);
     } finally {
       setIsLoading(false);
+      setIsPlaying(false);
     }
-  }, [isLoading]);
+  }, [isLoading, playingConversation]);
+
+  // Play full conversation: prompt -> current word -> response
+  const playConversation = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (isLoading || playingConversation) return;
+
+    conversationAbortRef.current = false;
+    setPlayingConversation(true);
+
+    try {
+      const conversationParts: string[] = [];
+
+      // Get first respondsTo as the prompt (A says this)
+      if (word.respondsTo && word.respondsTo.length > 0) {
+        const promptWord = words.find(w => w.id === word.respondsTo![0]);
+        if (promptWord) {
+          conversationParts.push(promptWord.russian);
+        }
+      }
+
+      // Current word is the response (B says this)
+      conversationParts.push(word.russian);
+
+      // Get first response as follow-up (A might say this)
+      if (word.responses && word.responses.length > 0) {
+        const responseWord = words.find(w => w.id === word.responses![0]);
+        if (responseWord) {
+          conversationParts.push(responseWord.russian);
+        }
+      }
+
+      // Play each part with a small pause between
+      for (let i = 0; i < conversationParts.length; i++) {
+        if (conversationAbortRef.current) break;
+
+        const url = await fetchAudio(conversationParts[i]);
+        if (conversationAbortRef.current) break;
+
+        await playAudioUrl(url);
+
+        // Small pause between conversation parts
+        if (i < conversationParts.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 400));
+        }
+      }
+    } catch (error) {
+      console.error('Conversation playback error:', error);
+    } finally {
+      setPlayingConversation(false);
+    }
+  }, [word, isLoading, playingConversation]);
 
   const handleSave = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -111,7 +169,7 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
             </h3>
             <button
               onClick={(e) => playAudio(word.russian, e)}
-              disabled={isLoading}
+              disabled={isLoading || playingConversation}
               className={`p-1.5 rounded-full transition-all ${
                 isPlaying
                   ? 'bg-blue-100 text-blue-600'
@@ -228,30 +286,58 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
             </div>
           )}
 
-          {/* Conversation Chain - collapsible */}
+          {/* Conversation Chain - collapsible with Play All button */}
           {hasChain && (
             <div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowChain(!showChain);
-                }}
-                className="flex items-center gap-1.5 text-xs font-medium text-green-600 uppercase tracking-wide mb-1 hover:text-green-700"
-              >
-                <span>In conversation</span>
-                <svg
-                  className={`w-3 h-3 transition-transform ${showChain ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowChain(!showChain);
+                  }}
+                  className="flex items-center gap-1.5 text-xs font-medium text-green-600 uppercase tracking-wide hover:text-green-700"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
+                  <span>In conversation</span>
+                  <svg
+                    className={`w-3 h-3 transition-transform ${showChain ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {/* Play full conversation button */}
+                <button
+                  onClick={playConversation}
+                  disabled={playingConversation}
+                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-all ${
+                    playingConversation
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-green-50 text-green-600 hover:bg-green-100'
+                  }`}
+                >
+                  {playingConversation ? (
+                    <>
+                      <svg className="w-3 h-3 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                      </svg>
+                      Playing...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      Play dialog
+                    </>
+                  )}
+                </button>
+              </div>
               {showChain && (
                 <div className="space-y-2 mt-2">
                   {respondsToWords.length > 0 && (
-                    <div className="text-xs text-gray-500 mb-1">Response to:</div>
+                    <div className="text-xs text-gray-500 mb-1">A: (prompt)</div>
                   )}
                   {respondsToWords.map((w) => (
                     <button
@@ -260,14 +346,30 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
                         e.stopPropagation();
                         onNavigateToWord?.(w.id);
                       }}
-                      className="w-full text-left p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="w-full text-left p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2"
                     >
-                      <span className="text-gray-900">{w.russian}</span>
-                      <span className="text-gray-500 text-sm ml-2">{w.english}</span>
+                      <span className="text-gray-900 flex-1">{w.russian}</span>
+                      <span className="text-gray-500 text-sm">{w.english}</span>
+                      <button
+                        onClick={(e) => playAudio(w.russian, e)}
+                        className="p-1 rounded-full hover:bg-gray-200"
+                      >
+                        <svg className="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </button>
                     </button>
                   ))}
+
+                  {/* Current word in chain */}
+                  <div className="text-xs text-gray-500 mb-1">B: (this phrase)</div>
+                  <div className="p-2 bg-green-100 rounded-lg border-2 border-green-300">
+                    <span className="font-medium text-gray-900">{word.russian}</span>
+                    <span className="text-gray-600 text-sm ml-2">{word.english}</span>
+                  </div>
+
                   {responseWords.length > 0 && (
-                    <div className="text-xs text-gray-500 mb-1 mt-2">Can respond with:</div>
+                    <div className="text-xs text-gray-500 mb-1 mt-2">A: (can respond)</div>
                   )}
                   {responseWords.map((w) => (
                     <button
@@ -276,10 +378,18 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
                         e.stopPropagation();
                         onNavigateToWord?.(w.id);
                       }}
-                      className="w-full text-left p-2 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                      className="w-full text-left p-2 bg-green-50 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-2"
                     >
-                      <span className="text-gray-900">{w.russian}</span>
-                      <span className="text-gray-500 text-sm ml-2">{w.english}</span>
+                      <span className="text-gray-900 flex-1">{w.russian}</span>
+                      <span className="text-gray-500 text-sm">{w.english}</span>
+                      <button
+                        onClick={(e) => playAudio(w.russian, e)}
+                        className="p-1 rounded-full hover:bg-green-200"
+                      >
+                        <svg className="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </button>
                     </button>
                   ))}
                 </div>
