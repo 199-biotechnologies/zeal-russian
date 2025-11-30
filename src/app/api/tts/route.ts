@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
-            speed: 0.9, // Slightly slower for learning
+            speed: 0.75, // 75% speed for clearer pronunciation when learning
           },
         }),
       }
