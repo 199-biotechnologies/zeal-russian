@@ -42,10 +42,10 @@ export default function BrowseView() {
           className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-sm"
         />
 
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setCategoryFilter('all')}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-full text-sm font-medium ${
               categoryFilter === 'all'
                 ? 'bg-red-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -59,13 +59,13 @@ export default function BrowseView() {
               <button
                 key={cat.id}
                 onClick={() => setCategoryFilter(cat.id)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap ${
+                className={`px-3 py-1.5 rounded-full text-sm font-medium ${
                   categoryFilter === cat.id
                     ? 'bg-red-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {cat.emoji} {cat.name} ({count})
+                {cat.emoji} {count}
               </button>
             );
           })}

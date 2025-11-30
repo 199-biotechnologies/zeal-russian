@@ -8,11 +8,14 @@ export default function InstallPrompt() {
 
   useEffect(() => {
     const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    const isMobile = isIOSDevice || isAndroid || window.innerWidth < 768;
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     const dismissed = localStorage.getItem('install-prompt-dismissed');
 
     setIsIOS(isIOSDevice);
-    setShowPrompt(!isStandalone && !dismissed);
+    // Only show on mobile devices, not desktop
+    setShowPrompt(isMobile && !isStandalone && !dismissed);
   }, []);
 
   const handleDismiss = () => {
