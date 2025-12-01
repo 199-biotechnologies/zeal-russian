@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getStats } from '@/lib/srs';
 
-type Tab = 'learn' | 'flashcards' | 'browse';
+type Tab = 'learn' | 'flashcards' | 'browse' | 'translate';
 
 interface NavigationProps {
   activeTab: Tab;
@@ -28,6 +28,7 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
     { id: 'learn', label: 'Learn', icon: '📚' },
     { id: 'flashcards', label: 'Flashcards', icon: '🎴' },
     { id: 'browse', label: 'Browse', icon: '🔍' },
+    { id: 'translate', label: 'Translate', icon: '🔄' },
   ];
 
   return (

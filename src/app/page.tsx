@@ -6,8 +6,9 @@ import InstallPrompt from '@/components/InstallPrompt';
 import LearnView from '@/components/LearnView';
 import FlashcardsView from '@/components/FlashcardsView';
 import BrowseView from '@/components/BrowseView';
+import TranslateView from '@/components/TranslateView';
 
-type Tab = 'learn' | 'flashcards' | 'browse';
+type Tab = 'learn' | 'flashcards' | 'browse' | 'translate';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('learn');
@@ -20,6 +21,7 @@ export default function Home() {
         {activeTab === 'learn' && <LearnView />}
         {activeTab === 'flashcards' && <FlashcardsView />}
         {activeTab === 'browse' && <BrowseView />}
+        {activeTab === 'translate' && <TranslateView />}
       </div>
 
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
