@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
         'HTTP-Referer': 'https://russian.vercel.app',
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-haiku',
+        model: 'anthropic/claude-haiku-4.5',
         messages: [
           {
             role: 'system',
