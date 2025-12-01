@@ -31,16 +31,36 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-playfair);
+}
+
+/* Base HTML/Body - extend background beyond safe areas */
+html {
+  background: var(--background);
 }
 
 body {
   background: linear-gradient(145deg, var(--background) 0%, var(--background-warm) 50%, #12121a 100%);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  letter-spacing: -0.01em;
+}
+
+/* Noise/grain texture overlay for depth */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
 }
 
 /* Liquid Glass Navigation Capsule */
@@ -51,8 +71,8 @@ body {
     rgba(255, 255, 255, 0.06) 50%,
     rgba(255, 255, 255, 0.1) 100%
   );
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid var(--glass-border);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.4),
@@ -67,8 +87,8 @@ body {
   border-radius: inherit;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 40%
+    rgba(255, 255, 255, 0.12) 0%,
+    transparent 50%
   );
   pointer-events: none;
 }
@@ -77,27 +97,27 @@ body {
 .glass-card {
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.04) 100%
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.03) 100%
   );
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 var(--glass-highlight);
+    0 4px 24px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Active nav item glow */
 .nav-active {
   background: linear-gradient(
     135deg,
-    rgba(220, 38, 38, 0.25) 0%,
+    rgba(220, 38, 38, 0.3) 0%,
     rgba(220, 38, 38, 0.15) 100%
   );
   box-shadow:
     0 0 20px var(--primary-glow),
-    inset 0 0 12px rgba(220, 38, 38, 0.1);
+    inset 0 0 12px rgba(220, 38, 38, 0.15);
 }
 
 /* Subtle animated gradient background */
@@ -119,7 +139,7 @@ body {
     var(--background-warm)
   );
   background-size: 400% 400%;
-  animation: gradient-shift 15s ease infinite;
+  animation: gradient-shift 20s ease infinite;
 }
 
 /* Custom scrollbar - dark theme */
@@ -132,15 +152,15 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
 }
 
-/* PWA safe areas */
+/* PWA safe areas - extend background into safe areas */
 .safe-top {
   padding-top: env(safe-area-inset-top);
 }
@@ -149,21 +169,38 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Smooth transitions */
+/* Smooth transitions - exclude transform to prevent jank */
 * {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow;
   transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Button hover glow effect */
 .btn-glow:hover {
-  box-shadow: 0 0 20px var(--primary-glow);
+  box-shadow: 0 0 24px var(--primary-glow);
 }
 
 /* Text gradient */
 .text-gradient {
   background: linear-gradient(135deg, var(--primary) 0%, var(--accent-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Display/Logo font - Soviet-inspired elegant typeface */
+.font-display {
+  font-family: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+/* Logo text style - combines display font with gradient */
+.logo-text {
+  font-family: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent-gold) 50%, var(--primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -178,4 +215,24 @@ body {
 ::selection {
   background: rgba(220, 38, 38, 0.3);
   color: var(--foreground);
+}
+
+/* Fix for iOS standalone mode - extend background into status bar / dynamic island area */
+@supports (padding-top: env(safe-area-inset-top)) {
+  html {
+    background: var(--background);
+    /* Ensure the background color extends into the notch/dynamic island area */
+  }
+
+  body {
+    /* Add padding to push content below safe area, but background extends up */
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Standalone PWA mode specific fixes */
+@media all and (display-mode: standalone) {
+  html, body {
+    background: var(--background);
+  }
 }

@@ -1,15 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Premium body font - clean, modern, excellent Cyrillic support
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin", "cyrillic"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Display font for headings - elegant with Soviet-era gravitas
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin", "cyrillic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -48,7 +52,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
+        className={`${inter.variable} ${playfair.variable} antialiased min-h-screen`}
       >
         {children}
       </body>

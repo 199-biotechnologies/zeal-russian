@@ -26,11 +26,11 @@ export default function InstallPrompt() {
   if (!showPrompt) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-red-600 to-red-700 text-white p-3 z-50 safe-top">
+    <div className="fixed top-0 left-0 right-0 glass-card border-t-0 rounded-t-none text-white p-3 z-50 safe-top">
       <div className="max-w-lg mx-auto flex items-center justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium">Add to Home Screen</p>
-          <p className="text-xs opacity-90 truncate">
+          <p className="text-sm font-medium text-white">Add to Home Screen</p>
+          <p className="text-xs text-white/60 truncate">
             {isIOS
               ? 'Tap Share → Add to Home Screen'
               : 'Install for the best experience'}
@@ -38,7 +38,7 @@ export default function InstallPrompt() {
         </div>
         <button
           onClick={handleDismiss}
-          className="text-white/80 hover:text-white text-xl px-2"
+          className="text-white/50 hover:text-white text-xl px-2"
           aria-label="Dismiss"
         >
           ×

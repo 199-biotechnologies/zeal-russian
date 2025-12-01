@@ -134,7 +134,7 @@ export default function TranslateView() {
   return (
     <div className="pb-20">
       <div className="px-4 py-6">
-        <h1 className="text-3xl font-bold text-gradient mb-1">Translate</h1>
+        <h1 className="text-3xl font-bold logo-text mb-1">Translate</h1>
         <p className="text-white/50">English-Russian casual translation</p>
       </div>
 

@@ -31,24 +31,24 @@ export default function BrowseView() {
 
   return (
     <div className="pb-20">
-      <div className="sticky top-0 bg-[#fdfcf9] z-10 px-4 py-4 border-b border-gray-100 space-y-3">
-        <h1 className="text-2xl font-bold text-gray-900">Browse</h1>
+      <div className="sticky top-0 z-10 px-4 py-4 glass-card rounded-b-3xl border-t-0 space-y-3">
+        <h1 className="text-2xl font-bold logo-text">Browse</h1>
 
         <input
           type="text"
           placeholder="Search words..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-sm"
+          className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-red-500/50 focus:ring-2 focus:ring-red-500/20 outline-none text-sm"
         />
 
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setCategoryFilter('all')}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium ${
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
               categoryFilter === 'all'
-                ? 'bg-red-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-red-500 text-white shadow-lg shadow-red-500/30'
+                : 'bg-white/10 text-white/60 hover:bg-white/15'
             }`}
           >
             All ({words.length})
@@ -59,10 +59,10 @@ export default function BrowseView() {
               <button
                 key={cat.id}
                 onClick={() => setCategoryFilter(cat.id)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium ${
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                   categoryFilter === cat.id
-                    ? 'bg-red-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/30'
+                    : 'bg-white/10 text-white/60 hover:bg-white/15'
                 }`}
               >
                 {cat.emoji} {count}
@@ -76,7 +76,7 @@ export default function BrowseView() {
         {filteredWords.length === 0 ? (
           <div className="text-center py-12">
             <span className="text-4xl mb-4 block">🔍</span>
-            <p className="text-gray-500">No words found</p>
+            <p className="text-white/50">No words found</p>
           </div>
         ) : (
           filteredWords.map((word) => (
