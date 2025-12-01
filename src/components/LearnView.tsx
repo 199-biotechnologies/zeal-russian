@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { categories } from '@/data/categories';
 import { words } from '@/data/words';
 import { Category } from '@/lib/types';
@@ -27,13 +28,23 @@ export default function LearnView() {
             </svg>
             <span className="text-sm font-medium">Back</span>
           </button>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <span>{categoryInfo?.emoji}</span>
-            <span>{categoryInfo?.name}</span>
-          </h2>
-          <p className="text-sm text-white/50 mt-1">
-            {filteredWords.length} expressions
-          </p>
+          <div className="flex items-center gap-3">
+            {categoryInfo?.icon && (
+              <Image
+                src={categoryInfo.icon}
+                alt={categoryInfo.name}
+                width={40}
+                height={40}
+                className="w-10 h-10 object-contain"
+              />
+            )}
+            <div>
+              <h2 className="text-2xl font-bold text-white">{categoryInfo?.name}</h2>
+              <p className="text-sm text-white/50">
+                {filteredWords.length} expressions
+              </p>
+            </div>
+          </div>
         </div>
         <div className="p-4 space-y-3">
           {filteredWords.map((word) => (
@@ -57,15 +68,37 @@ export default function LearnView() {
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className="glass-card rounded-2xl p-4 text-left hover:scale-[1.02] active:scale-[0.98]"
+              className="glass-card rounded-2xl overflow-hidden text-left hover:scale-[1.02] active:scale-[0.98] relative group"
             >
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">{category.emoji}</span>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-white">{category.name}</h3>
-                  <p className="text-sm text-white/50">{category.description}</p>
+              {/* Large icon on the left, partially cropped */}
+              <div className="flex items-stretch">
+                <div className="relative w-24 h-20 flex-shrink-0 overflow-hidden">
+                  {category.icon ? (
+                    <Image
+                      src={category.icon}
+                      alt={category.name}
+                      fill
+                      className="object-cover object-center scale-150 opacity-90 group-hover:scale-[1.6] group-hover:opacity-100 transition-transform duration-300"
+                    />
+                  ) : (
+                    <span className="absolute inset-0 flex items-center justify-center text-4xl">
+                      {category.emoji}
+                    </span>
+                  )}
+                  {/* Gradient fade on right edge */}
+                  <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-r from-transparent to-white/[0.07]" />
                 </div>
-                <div className="text-sm text-white/40 bg-white/10 px-2 py-1 rounded-full">{count}</div>
+
+                {/* Text content on the right */}
+                <div className="flex-1 py-4 px-4 flex items-center">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-white truncate">{category.name}</h3>
+                    <p className="text-sm text-white/50 truncate">{category.description}</p>
+                  </div>
+                  <div className="text-sm text-white/40 bg-white/10 px-2.5 py-1 rounded-full ml-3 flex-shrink-0">
+                    {count}
+                  </div>
+                </div>
               </div>
             </button>
           );

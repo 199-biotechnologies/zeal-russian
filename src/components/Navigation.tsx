@@ -64,8 +64,8 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
   }, []);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-8 safe-bottom z-50 pointer-events-none">
-      <nav className="glass-nav rounded-[28px] px-2 py-2 pointer-events-auto relative overflow-hidden mb-2">
+    <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-10 safe-bottom z-50 pointer-events-none">
+      <nav className="glass-nav rounded-[28px] px-2 py-2 pointer-events-auto relative overflow-hidden mb-4">
         <div className="flex items-center gap-1">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;

@@ -44,6 +44,7 @@ export interface CategoryInfo {
   id: Category;
   name: string;
   emoji: string;
+  icon?: string; // Path to SVG icon
   description: string;
 }
 

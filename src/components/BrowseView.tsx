@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { words } from '@/data/words';
 import { categories } from '@/data/categories';
 import WordCard from './WordCard';
@@ -45,7 +46,7 @@ export default function BrowseView() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setCategoryFilter('all')}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
               categoryFilter === 'all'
                 ? 'bg-red-500 text-white shadow-lg shadow-red-500/30'
                 : 'bg-white/10 text-white/60 hover:bg-white/15'
@@ -59,13 +60,24 @@ export default function BrowseView() {
               <button
                 key={cat.id}
                 onClick={() => setCategoryFilter(cat.id)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
                   categoryFilter === cat.id
                     ? 'bg-red-500 text-white shadow-lg shadow-red-500/30'
                     : 'bg-white/10 text-white/60 hover:bg-white/15'
                 }`}
               >
-                {cat.emoji} {count}
+                {cat.icon ? (
+                  <Image
+                    src={cat.icon}
+                    alt={cat.name}
+                    width={16}
+                    height={16}
+                    className="w-4 h-4 object-contain"
+                  />
+                ) : (
+                  <span>{cat.emoji}</span>
+                )}
+                {count}
               </button>
             );
           })}

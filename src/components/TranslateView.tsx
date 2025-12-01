@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function TranslateView() {
   const [text, setText] = useState('');
@@ -143,7 +144,13 @@ export default function TranslateView() {
         <div className="glass-card rounded-2xl p-4">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="flex items-center gap-2 text-white w-24 justify-end">
-              <span className="text-2xl">{fromLang === 'en' ? '🇬🇧' : '🇷🇺'}</span>
+              <Image
+                src={fromLang === 'en' ? '/icons/english.svg' : '/icons/russian.svg'}
+                alt={fromLang === 'en' ? 'English' : 'Russian'}
+                width={28}
+                height={28}
+                className="w-7 h-7 object-contain"
+              />
               <span className="text-lg font-semibold">{fromLang === 'en' ? 'EN' : 'RU'}</span>
             </div>
             <button
@@ -155,7 +162,13 @@ export default function TranslateView() {
               </svg>
             </button>
             <div className="flex items-center gap-2 text-white w-24">
-              <span className="text-2xl">{fromLang === 'en' ? '🇷🇺' : '🇬🇧'}</span>
+              <Image
+                src={fromLang === 'en' ? '/icons/russian.svg' : '/icons/english.svg'}
+                alt={fromLang === 'en' ? 'Russian' : 'English'}
+                width={28}
+                height={28}
+                className="w-7 h-7 object-contain"
+              />
               <span className="text-lg font-semibold">{fromLang === 'en' ? 'RU' : 'EN'}</span>
             </div>
           </div>
@@ -208,7 +221,13 @@ export default function TranslateView() {
           <div className="glass-card rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="text-xl">{fromLang === 'en' ? '🇷🇺' : '🇬🇧'}</span>
+                <Image
+                  src={fromLang === 'en' ? '/icons/russian.svg' : '/icons/english.svg'}
+                  alt={fromLang === 'en' ? 'Russian' : 'English'}
+                  width={24}
+                  height={24}
+                  className="w-6 h-6 object-contain"
+                />
                 <span className="text-sm font-medium text-white/50">
                   {fromLang === 'en' ? 'Russian' : 'English'}
                 </span>
