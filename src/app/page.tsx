@@ -14,10 +14,10 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('learn');
 
   return (
-    <main className="min-h-screen bg-[#fdfcf9]">
+    <main className="min-h-screen animated-bg">
       <InstallPrompt />
 
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-lg mx-auto pb-24">
         {activeTab === 'learn' && <LearnView />}
         {activeTab === 'flashcards' && <FlashcardsView />}
         {activeTab === 'browse' && <BrowseView />}

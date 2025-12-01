@@ -1,10 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fdfcf9;
-  --foreground: #1a1a1a;
-  --accent: #dc2626;
-  --accent-light: #fef2f2;
+  /* Russian-inspired vibrant palette */
+  --background: #0f0f12;
+  --background-warm: #151518;
+  --foreground: #fafafa;
+  --foreground-muted: #a1a1aa;
+
+  /* Primary: Deep crimson red (Russian flag inspired) */
+  --primary: #dc2626;
+  --primary-glow: rgba(220, 38, 38, 0.4);
+
+  /* Accent: Golden/amber (Russian orthodox gold) */
+  --accent-gold: #f59e0b;
+  --accent-gold-glow: rgba(245, 158, 11, 0.3);
+
+  /* Secondary: Cool blue (Russian flag blue) */
+  --secondary-blue: #3b82f6;
+  --secondary-blue-glow: rgba(59, 130, 246, 0.3);
+
+  /* Glass effects */
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.15);
+
+  /* Shadows */
+  --shadow-glow: 0 0 40px rgba(220, 38, 38, 0.15), 0 0 80px rgba(245, 158, 11, 0.08);
 }
 
 @theme inline {
@@ -15,13 +36,93 @@
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(145deg, var(--background) 0%, var(--background-warm) 50%, #12121a 100%);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
-/* Custom scrollbar */
+/* Liquid Glass Navigation Capsule */
+.glass-nav {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.glass-nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 40%
+  );
+  pointer-events: none;
+}
+
+/* Glass Card */
+.glass-card {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 var(--glass-highlight);
+}
+
+/* Active nav item glow */
+.nav-active {
+  background: linear-gradient(
+    135deg,
+    rgba(220, 38, 38, 0.25) 0%,
+    rgba(220, 38, 38, 0.15) 100%
+  );
+  box-shadow:
+    0 0 20px var(--primary-glow),
+    inset 0 0 12px rgba(220, 38, 38, 0.1);
+}
+
+/* Subtle animated gradient background */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animated-bg {
+  background: linear-gradient(
+    -45deg,
+    var(--background),
+    #1a1520,
+    #151520,
+    var(--background-warm)
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* Custom scrollbar - dark theme */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -31,8 +132,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* PWA safe areas */
@@ -47,6 +152,30 @@ body {
 /* Smooth transitions */
 * {
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-  transition-duration: 150ms;
+  transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button hover glow effect */
+.btn-glow:hover {
+  box-shadow: 0 0 20px var(--primary-glow);
+}
+
+/* Text gradient */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gold accent text */
+.text-gold {
+  color: var(--accent-gold);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(220, 38, 38, 0.3);
+  color: var(--foreground);
 }

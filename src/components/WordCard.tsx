@@ -159,12 +159,12 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
   return (
     <div
       onClick={() => setExpanded(!expanded)}
-      className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md active:scale-[0.99] transition-all"
+      className="glass-card rounded-2xl p-4 cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="text-xl font-semibold text-gray-900">
+            <h3 className="text-xl font-semibold text-white">
               {word.russian}
             </h3>
             <button
@@ -172,10 +172,10 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
               disabled={isLoading || playingConversation}
               className={`p-1.5 rounded-full transition-all ${
                 isPlaying
-                  ? 'bg-blue-100 text-blue-600'
+                  ? 'bg-red-500/30 text-red-400'
                   : isLoading
-                  ? 'bg-gray-100 text-gray-400'
-                  : 'bg-gray-100 text-gray-500 hover:bg-blue-50 hover:text-blue-500'
+                  ? 'bg-white/10 text-white/30'
+                  : 'bg-white/10 text-white/50 hover:bg-red-500/20 hover:text-red-400'
               }`}
               aria-label="Play pronunciation"
             >
@@ -191,15 +191,15 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
               )}
             </button>
           </div>
-          <p className="text-sm text-gray-500 mb-1">{word.transliteration}</p>
-          <p className="text-base text-gray-700">{word.english}</p>
+          <p className="text-sm text-white/40 mb-1">{word.transliteration}</p>
+          <p className="text-base text-white/70">{word.english}</p>
         </div>
         <button
           onClick={handleSave}
           className={`p-2 rounded-full transition-colors ${
             saved
-              ? 'bg-red-100 text-red-600'
-              : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+              ? 'bg-amber-500/30 text-amber-400'
+              : 'bg-white/10 text-white/30 hover:bg-white/20'
           }`}
           aria-label={saved ? 'Remove from flashcards' : 'Add to flashcards'}
         >
@@ -208,20 +208,20 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
       </div>
 
       {expanded && (
-        <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+        <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
           {/* Example with audio */}
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+            <p className="text-xs font-medium text-white/40 uppercase tracking-wide mb-1">
               Example
             </p>
             <div className="flex items-start gap-2">
               <div className="flex-1">
-                <p className="text-base text-gray-900 italic">{word.example}</p>
-                <p className="text-sm text-gray-600 mt-1">{word.exampleTranslation}</p>
+                <p className="text-base text-white/90 italic">{word.example}</p>
+                <p className="text-sm text-white/50 mt-1">{word.exampleTranslation}</p>
               </div>
               <button
                 onClick={(e) => playAudio(word.example, e)}
-                className="p-1.5 rounded-full bg-gray-100 text-gray-500 hover:bg-blue-50 hover:text-blue-500 transition-colors shrink-0"
+                className="p-1.5 rounded-full bg-white/10 text-white/50 hover:bg-red-500/20 hover:text-red-400 transition-colors shrink-0"
                 aria-label="Play example"
               >
                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
@@ -233,10 +233,10 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
 
           {/* Notes */}
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+            <p className="text-xs font-medium text-white/40 uppercase tracking-wide mb-1">
               Notes
             </p>
-            <p className="text-sm text-gray-700">{word.notes}</p>
+            <p className="text-sm text-white/60">{word.notes}</p>
           </div>
 
           {/* Variations - collapsible */}
@@ -247,7 +247,7 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
                   e.stopPropagation();
                   setShowVariations(!showVariations);
                 }}
-                className="flex items-center gap-1.5 text-xs font-medium text-blue-600 uppercase tracking-wide mb-1 hover:text-blue-700"
+                className="flex items-center gap-1.5 text-xs font-medium text-blue-400 uppercase tracking-wide mb-1 hover:text-blue-300"
               >
                 <span>Also say</span>
                 <svg
@@ -264,16 +264,16 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
                   {word.variations.map((v, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg"
+                      className="flex items-center gap-2 p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl"
                     >
                       <div className="flex-1">
-                        <span className="font-medium text-gray-900">{v.russian}</span>
-                        <span className="text-gray-500 text-sm ml-2">({v.transliteration})</span>
-                        <span className="text-blue-600 text-xs ml-2">• {v.nuance}</span>
+                        <span className="font-medium text-white">{v.russian}</span>
+                        <span className="text-white/50 text-sm ml-2">({v.transliteration})</span>
+                        <span className="text-blue-400 text-xs ml-2">• {v.nuance}</span>
                       </div>
                       <button
                         onClick={(e) => playAudio(v.russian, e)}
-                        className="p-1 rounded-full bg-white text-gray-500 hover:text-blue-500"
+                        className="p-1 rounded-full bg-white/10 text-white/50 hover:text-blue-400"
                       >
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M8 5v14l11-7z" />
@@ -295,7 +295,7 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
                     e.stopPropagation();
                     setShowChain(!showChain);
                   }}
-                  className="flex items-center gap-1.5 text-xs font-medium text-green-600 uppercase tracking-wide hover:text-green-700"
+                  className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 uppercase tracking-wide hover:text-emerald-300"
                 >
                   <span>In conversation</span>
                   <svg
@@ -313,8 +313,8 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
                   disabled={playingConversation}
                   className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-all ${
                     playingConversation
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-green-50 text-green-600 hover:bg-green-100'
+                      ? 'bg-emerald-500/30 text-emerald-300'
+                      : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
                   }`}
                 >
                   {playingConversation ? (
@@ -337,7 +337,7 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
               {showChain && (
                 <div className="space-y-2 mt-2">
                   {respondsToWords.length > 0 && (
-                    <div className="text-xs text-gray-500 mb-1">A: (prompt)</div>
+                    <div className="text-xs text-white/40 mb-1">A: (prompt)</div>
                   )}
                   {respondsToWords.map((w) => (
                     <button
@@ -346,15 +346,15 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
                         e.stopPropagation();
                         onNavigateToWord?.(w.id);
                       }}
-                      className="w-full text-left p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2"
+                      className="w-full text-left p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors flex items-center gap-2"
                     >
-                      <span className="text-gray-900 flex-1">{w.russian}</span>
-                      <span className="text-gray-500 text-sm">{w.english}</span>
+                      <span className="text-white flex-1">{w.russian}</span>
+                      <span className="text-white/50 text-sm">{w.english}</span>
                       <button
                         onClick={(e) => playAudio(w.russian, e)}
-                        className="p-1 rounded-full hover:bg-gray-200"
+                        className="p-1 rounded-full hover:bg-white/10"
                       >
-                        <svg className="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-3 h-3 text-white/40" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M8 5v14l11-7z" />
                         </svg>
                       </button>
@@ -362,14 +362,14 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
                   ))}
 
                   {/* Current word in chain */}
-                  <div className="text-xs text-gray-500 mb-1">B: (this phrase)</div>
-                  <div className="p-2 bg-green-100 rounded-lg border-2 border-green-300">
-                    <span className="font-medium text-gray-900">{word.russian}</span>
-                    <span className="text-gray-600 text-sm ml-2">{word.english}</span>
+                  <div className="text-xs text-white/40 mb-1">B: (this phrase)</div>
+                  <div className="p-2 bg-emerald-500/20 rounded-xl border border-emerald-500/30">
+                    <span className="font-medium text-white">{word.russian}</span>
+                    <span className="text-white/60 text-sm ml-2">{word.english}</span>
                   </div>
 
                   {responseWords.length > 0 && (
-                    <div className="text-xs text-gray-500 mb-1 mt-2">A: (can respond)</div>
+                    <div className="text-xs text-white/40 mb-1 mt-2">A: (can respond)</div>
                   )}
                   {responseWords.map((w) => (
                     <button
@@ -378,15 +378,15 @@ export default function WordCard({ word, onSaveChange, onNavigateToWord }: WordC
                         e.stopPropagation();
                         onNavigateToWord?.(w.id);
                       }}
-                      className="w-full text-left p-2 bg-green-50 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-2"
+                      className="w-full text-left p-2 bg-emerald-500/10 rounded-xl hover:bg-emerald-500/15 transition-colors flex items-center gap-2"
                     >
-                      <span className="text-gray-900 flex-1">{w.russian}</span>
-                      <span className="text-gray-500 text-sm">{w.english}</span>
+                      <span className="text-white flex-1">{w.russian}</span>
+                      <span className="text-white/50 text-sm">{w.english}</span>
                       <button
                         onClick={(e) => playAudio(w.russian, e)}
-                        className="p-1 rounded-full hover:bg-green-200"
+                        className="p-1 rounded-full hover:bg-emerald-500/20"
                       >
-                        <svg className="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-3 h-3 text-white/40" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M8 5v14l11-7z" />
                         </svg>
                       </button>
