@@ -72,13 +72,14 @@ export default function LearnView() {
             >
               {/* Large icon on the left, partially cropped */}
               <div className="flex items-stretch">
-                <div className="relative w-24 h-20 flex-shrink-0 overflow-hidden">
+                <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden flex items-center justify-center">
                   {category.icon ? (
                     <Image
                       src={category.icon}
                       alt={category.name}
-                      fill
-                      className="object-cover object-center scale-150 opacity-90 group-hover:scale-[1.6] group-hover:opacity-100 transition-transform duration-300"
+                      width={64}
+                      height={64}
+                      className="w-16 h-16 object-contain scale-110 opacity-90 group-hover:scale-[1.15] group-hover:opacity-100 transition-transform duration-300"
                     />
                   ) : (
                     <span className="absolute inset-0 flex items-center justify-center text-4xl">
