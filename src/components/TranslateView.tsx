@@ -6,6 +6,7 @@ import Image from 'next/image';
 export default function TranslateView() {
   const [text, setText] = useState('');
   const [translation, setTranslation] = useState('');
+  const [context, setContext] = useState('');
   const [examples, setExamples] = useState<Array<{ text: string; english: string }>>([]);
   const [casualAlternative, setCasualAlternative] = useState('');
   const [casualExamples, setCasualExamples] = useState<Array<{ text: string; english: string }>>([]);
@@ -32,6 +33,7 @@ export default function TranslateView() {
 
       const data = await res.json();
       setTranslation(data.translation);
+      setContext(data.context || '');
       setExamples(data.examples || []);
       setCasualAlternative(data.casual_alternative || '');
       setCasualExamples(data.casual_examples || []);
@@ -39,6 +41,7 @@ export default function TranslateView() {
     } catch (error) {
       console.error('Translation error:', error);
       setTranslation('Translation failed. Please try again.');
+      setContext('');
       setExamples([]);
       setCasualAlternative('');
       setCasualExamples([]);
@@ -50,6 +53,7 @@ export default function TranslateView() {
   const toggleLanguage = () => {
     setFromLang(fromLang === 'en' ? 'ru' : 'en');
     setTranslation('');
+    setContext('');
     setExamples([]);
     setCasualAlternative('');
     setCasualExamples([]);
@@ -270,7 +274,14 @@ export default function TranslateView() {
             </div>
 
             {/* Main Translation */}
-            <p className="text-2xl font-semibold text-white leading-relaxed mb-4">{translation}</p>
+            <p className="text-2xl font-semibold text-white leading-relaxed mb-2">{translation}</p>
+
+            {/* Context Note - only shown when present */}
+            {context && (
+              <p className="text-sm text-white/50 italic mb-4 leading-relaxed">
+                {context}
+              </p>
+            )}
 
             {/* Usage Examples */}
             {examples && examples.length > 0 && (

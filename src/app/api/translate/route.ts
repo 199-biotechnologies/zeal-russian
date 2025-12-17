@@ -44,6 +44,7 @@ IMPORTANT: You must respond with ONLY a JSON object, no additional text or comme
 {
   "translation": "standard casual translation",
   "casual_alternative": "ultra-casual/slang alternative",
+  "context": "optional - only include if user provided specific context, tone, or situation in their request. Briefly explain why you chose these specific words/phrases to match their intent. Keep it short (1-2 sentences max).",
   "examples": [
     {
       "text": "example usage for standard translation",
@@ -57,6 +58,11 @@ IMPORTANT: You must respond with ONLY a JSON object, no additional text or comme
     }
   ]
 }
+
+CONTEXT FIELD RULES:
+- ONLY include "context" if the user provided specific instructions like tone, situation, relationship, or emotion (e.g., "say it softly", "for a girlfriend", "angry tone", "formal setting")
+- Do NOT include context for simple, straightforward translation requests
+- When included, explain WHY you chose specific words to match their intent (e.g., "Used 'милая' (dear/sweetie) for the soft, affectionate tone you wanted")
 
 Provide 2 examples for each version showing authentic Russian usage. Each example should include both the text in the target language AND its English translation. If translating TO Russian, provide Russian examples with English translations. If translating TO English, provide English examples with their original Russian.`;
 
@@ -110,6 +116,7 @@ export async function POST(request: NextRequest) {
     interface TranslationResponse {
       translation?: string;
       casual_alternative?: string;
+      context?: string;
       examples?: Array<{ text: string; english: string }>;
       casual_examples?: Array<{ text: string; english: string }>;
     }
@@ -188,12 +195,14 @@ export async function POST(request: NextRequest) {
 
     const translation = parsedResponse.translation || '';
     const casual_alternative = parsedResponse.casual_alternative || '';
+    const context = parsedResponse.context || '';
     const examples = parsedResponse.examples || [];
     const casual_examples = parsedResponse.casual_examples || [];
 
     return NextResponse.json({
       translation,
       casual_alternative,
+      context,
       examples,
       casual_examples,
       original: text,
