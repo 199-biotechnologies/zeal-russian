@@ -87,7 +87,12 @@ export default function BrowseView() {
       <div className="p-4 space-y-3">
         {filteredWords.length === 0 ? (
           <div className="text-center py-12">
-            <span className="text-4xl mb-4 block">🔍</span>
+            <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
+              <svg className="w-7 h-7 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8" strokeWidth={1.5} />
+                <path strokeLinecap="round" strokeWidth={1.5} d="M21 21l-4.35-4.35" />
+              </svg>
+            </div>
             <p className="text-white/50">No words found</p>
           </div>
         ) : (
