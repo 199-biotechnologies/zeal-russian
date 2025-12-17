@@ -285,7 +285,7 @@ export default function TranslateView() {
                             onClick={() => playAudio(example.text, `example-${idx}`)}
                             disabled={playingAudio !== null}
                             className="flex-shrink-0 p-0.5 hover:bg-white/10 rounded transition-colors disabled:opacity-50 mt-0.5"
-                            title="Play audio"
+                            title="Play Russian audio"
                           >
                             {playingAudio === `example-${idx}` ? (
                               <svg className="w-3.5 h-3.5 animate-pulse text-red-400" fill="currentColor" viewBox="0 0 24 24">
@@ -300,7 +300,27 @@ export default function TranslateView() {
                         )}
                         <div className="flex-1">
                           <p className="text-sm text-white/90 leading-relaxed font-medium">{example.text}</p>
-                          <p className="text-xs text-white/50 italic">{example.english}</p>
+                          <div className="flex items-center gap-1.5">
+                            {fromLang === 'ru' && (
+                              <button
+                                onClick={() => playAudio(example.english, `example-ru-${idx}`)}
+                                disabled={playingAudio !== null}
+                                className="flex-shrink-0 p-0.5 hover:bg-white/10 rounded transition-colors disabled:opacity-50"
+                                title="Play Russian audio"
+                              >
+                                {playingAudio === `example-ru-${idx}` ? (
+                                  <svg className="w-3 h-3 animate-pulse text-red-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                  </svg>
+                                ) : (
+                                  <svg className="w-3 h-3 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                                  </svg>
+                                )}
+                              </button>
+                            )}
+                            <p className="text-xs text-white/50 italic">{example.english}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -386,7 +406,7 @@ export default function TranslateView() {
                                 onClick={() => playAudio(example.text, `casual-example-${idx}`)}
                                 disabled={playingAudio !== null}
                                 className="flex-shrink-0 p-0.5 hover:bg-white/10 rounded transition-colors disabled:opacity-50 mt-0.5"
-                                title="Play audio"
+                                title="Play Russian audio"
                               >
                                 {playingAudio === `casual-example-${idx}` ? (
                                   <svg className="w-3.5 h-3.5 animate-pulse text-amber-400" fill="currentColor" viewBox="0 0 24 24">
@@ -401,7 +421,27 @@ export default function TranslateView() {
                             )}
                             <div className="flex-1">
                               <p className="text-sm text-white/90 leading-relaxed font-medium">{example.text}</p>
-                              <p className="text-xs text-white/50 italic">{example.english}</p>
+                              <div className="flex items-center gap-1.5">
+                                {fromLang === 'ru' && (
+                                  <button
+                                    onClick={() => playAudio(example.english, `casual-example-ru-${idx}`)}
+                                    disabled={playingAudio !== null}
+                                    className="flex-shrink-0 p-0.5 hover:bg-white/10 rounded transition-colors disabled:opacity-50"
+                                    title="Play Russian audio"
+                                  >
+                                    {playingAudio === `casual-example-ru-${idx}` ? (
+                                      <svg className="w-3 h-3 animate-pulse text-amber-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                      </svg>
+                                    ) : (
+                                      <svg className="w-3 h-3 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                                      </svg>
+                                    )}
+                                  </button>
+                                )}
+                                <p className="text-xs text-white/50 italic">{example.english}</p>
+                              </div>
                             </div>
                           </div>
                         </div>
