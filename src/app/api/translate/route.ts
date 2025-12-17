@@ -112,11 +112,18 @@ export async function POST(request: NextRequest) {
     try {
       let jsonContent = responseContent.trim();
 
-      // Remove markdown code blocks if present
-      if (jsonContent.startsWith('```json')) {
-        jsonContent = jsonContent.replace(/^```json\n/, '').replace(/\n```$/, '');
-      } else if (jsonContent.startsWith('```')) {
-        jsonContent = jsonContent.replace(/^```\n/, '').replace(/\n```$/, '');
+      // Extract JSON from markdown code blocks if present (handles text before/after)
+      const jsonBlockMatch = jsonContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (jsonBlockMatch) {
+        jsonContent = jsonBlockMatch[1].trim();
+      }
+
+      // Also try to extract raw JSON object if no code block found
+      if (!jsonBlockMatch) {
+        const jsonObjectMatch = jsonContent.match(/\{[\s\S]*\}/);
+        if (jsonObjectMatch) {
+          jsonContent = jsonObjectMatch[0];
+        }
       }
 
       parsedResponse = JSON.parse(jsonContent);
