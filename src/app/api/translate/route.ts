@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
-const TRANSLATION_PROMPT = `You are a casual, fun translator specializing in RUSSIAN language - focusing on natural, conversational Russian.
+const TRANSLATION_PROMPT = `You are a casual, fun translator specializing in RUSSIAN language - focusing on natural, conversational Russian. Your translations are also MINI LEARNING LESSONS.
 
 CRITICAL: Use NATURAL RUSSIAN language:
 
@@ -40,31 +40,47 @@ IMPORTANT: Provide TWO translations:
 1. STANDARD CASUAL: Friendly, casual Russian (ты form) - what you'd say to anyone in everyday conversation
 2. STREET/SLANG: Ultra-casual, heavy slang with colloquialisms - authentic street Russian that young people use. Include mild swear words when natural. Don't sanitize - be authentic to how Russians actually speak informally.
 
+CRITICAL RULES FOR OUTPUT:
+- "translation" must be ONE clean phrase. NO parentheticals. NO alternatives. Just the translation.
+- "casual_alternative" must be ONE clean phrase. Same rule.
+- Back-translations help the learner verify they understand what they're saying.
+- "notes" is for learning: alternatives, word breakdowns, tips. ALWAYS educational.
+
 IMPORTANT: You must respond with ONLY a JSON object, no additional text or comments. Format:
 {
-  "translation": "standard casual translation",
-  "casual_alternative": "ultra-casual/slang alternative",
-  "context": "optional - only include if user provided specific context, tone, or situation in their request. Briefly explain why you chose these specific words/phrases to match their intent. Keep it short (1-2 sentences max).",
+  "translation": "single clean Russian translation - NO parentheticals or alternatives",
+  "back_translation": "what the translation literally means in English",
+  "context": "optional - only if user gave specific tone/situation. Why you chose these words.",
+  "notes": "Learning notes: alternative phrasings with explanations, word breakdowns, grammar tips, cultural notes. Make it educational.",
   "examples": [
     {
-      "text": "example usage for standard translation",
+      "text": "example sentence in Russian",
       "english": "English translation of the example"
     }
   ],
+  "casual_alternative": "single clean street/slang translation - NO parentheticals",
+  "casual_back_translation": "what the street version literally means in English",
+  "casual_notes": "Learning notes for the street version: why these slang words, alternatives, cultural context.",
   "casual_examples": [
     {
-      "text": "example usage for street/slang version",
+      "text": "example sentence in street Russian",
       "english": "English translation of the example"
     }
   ]
 }
 
-CONTEXT FIELD RULES:
-- ONLY include "context" if the user provided specific instructions like tone, situation, relationship, or emotion (e.g., "say it softly", "for a girlfriend", "angry tone", "formal setting")
-- Do NOT include context for simple, straightforward translation requests
-- When included, explain WHY you chose specific words to match their intent (e.g., "Used 'милая' (dear/sweetie) for the soft, affectionate tone you wanted")
+FIELD RULES:
+- "translation" / "casual_alternative": MUST be clean, single phrases. Never include (parenthetical alternatives).
+- "back_translation" / "casual_back_translation": ALWAYS include. Helps learner verify meaning.
+- "context": ONLY if user provided tone/situation instructions. Otherwise omit or leave empty.
+- "notes" / "casual_notes": ALWAYS include. This is the learning part. Include:
+  * Alternative ways to say it (with explanations)
+  * Word-by-word breakdown if helpful
+  * Grammar tips (e.g., "word order is flexible in Russian")
+  * Cultural context when relevant
+- "examples": 2 examples each showing authentic usage.
 
-Provide 2 examples for each version showing authentic Russian usage. Each example should include both the text in the target language AND its English translation. If translating TO Russian, provide Russian examples with English translations. If translating TO English, provide English examples with their original Russian.`;
+Provide 2 examples for each version showing authentic Russian usage. Each example should include both the Russian text AND its English translation.`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -115,9 +131,13 @@ export async function POST(request: NextRequest) {
 
     interface TranslationResponse {
       translation?: string;
-      casual_alternative?: string;
+      back_translation?: string;
       context?: string;
+      notes?: string;
       examples?: Array<{ text: string; english: string }>;
+      casual_alternative?: string;
+      casual_back_translation?: string;
+      casual_notes?: string;
       casual_examples?: Array<{ text: string; english: string }>;
     }
 
@@ -194,16 +214,24 @@ export async function POST(request: NextRequest) {
     }
 
     const translation = parsedResponse.translation || '';
-    const casual_alternative = parsedResponse.casual_alternative || '';
+    const back_translation = parsedResponse.back_translation || '';
     const context = parsedResponse.context || '';
+    const notes = parsedResponse.notes || '';
     const examples = parsedResponse.examples || [];
+    const casual_alternative = parsedResponse.casual_alternative || '';
+    const casual_back_translation = parsedResponse.casual_back_translation || '';
+    const casual_notes = parsedResponse.casual_notes || '';
     const casual_examples = parsedResponse.casual_examples || [];
 
     return NextResponse.json({
       translation,
-      casual_alternative,
+      back_translation,
       context,
+      notes,
       examples,
+      casual_alternative,
+      casual_back_translation,
+      casual_notes,
       casual_examples,
       original: text,
       fromLang,

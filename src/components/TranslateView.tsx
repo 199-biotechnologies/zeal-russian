@@ -6,9 +6,13 @@ import Image from 'next/image';
 export default function TranslateView() {
   const [text, setText] = useState('');
   const [translation, setTranslation] = useState('');
+  const [backTranslation, setBackTranslation] = useState('');
   const [context, setContext] = useState('');
+  const [notes, setNotes] = useState('');
   const [examples, setExamples] = useState<Array<{ text: string; english: string }>>([]);
   const [casualAlternative, setCasualAlternative] = useState('');
+  const [casualBackTranslation, setCasualBackTranslation] = useState('');
+  const [casualNotes, setCasualNotes] = useState('');
   const [casualExamples, setCasualExamples] = useState<Array<{ text: string; english: string }>>([]);
   const [showCasual, setShowCasual] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -33,17 +37,25 @@ export default function TranslateView() {
 
       const data = await res.json();
       setTranslation(data.translation);
+      setBackTranslation(data.back_translation || '');
       setContext(data.context || '');
+      setNotes(data.notes || '');
       setExamples(data.examples || []);
       setCasualAlternative(data.casual_alternative || '');
+      setCasualBackTranslation(data.casual_back_translation || '');
+      setCasualNotes(data.casual_notes || '');
       setCasualExamples(data.casual_examples || []);
       setShowCasual(true);
     } catch (error) {
       console.error('Translation error:', error);
       setTranslation('Translation failed. Please try again.');
+      setBackTranslation('');
       setContext('');
+      setNotes('');
       setExamples([]);
       setCasualAlternative('');
+      setCasualBackTranslation('');
+      setCasualNotes('');
       setCasualExamples([]);
     } finally {
       setLoading(false);
@@ -53,9 +65,13 @@ export default function TranslateView() {
   const toggleLanguage = () => {
     setFromLang(fromLang === 'en' ? 'ru' : 'en');
     setTranslation('');
+    setBackTranslation('');
     setContext('');
+    setNotes('');
     setExamples([]);
     setCasualAlternative('');
+    setCasualBackTranslation('');
+    setCasualNotes('');
     setCasualExamples([]);
     setShowCasual(true);
   };
@@ -274,13 +290,29 @@ export default function TranslateView() {
             </div>
 
             {/* Main Translation */}
-            <p className="text-2xl font-semibold text-white leading-relaxed mb-2">{translation}</p>
+            <p className="text-2xl font-semibold text-white leading-relaxed">{translation}</p>
+
+            {/* Back Translation */}
+            {backTranslation && (
+              <p className="text-sm text-white/40 mt-1 mb-3">
+                <span className="text-white/30 mr-1">↳</span>
+                &ldquo;{backTranslation}&rdquo;
+              </p>
+            )}
 
             {/* Context Note - only shown when present */}
             {context && (
-              <p className="text-sm text-white/50 italic mb-4 leading-relaxed">
+              <p className="text-sm text-white/50 italic mb-3 leading-relaxed">
                 {context}
               </p>
+            )}
+
+            {/* Learning Notes */}
+            {notes && (
+              <div className="mt-3 pt-3 border-t border-white/10">
+                <h4 className="text-xs font-semibold text-white/40 mb-2 uppercase tracking-wide">Learning Notes</h4>
+                <p className="text-sm text-white/70 leading-relaxed whitespace-pre-line">{notes}</p>
+              </div>
             )}
 
             {/* Usage Examples */}
@@ -402,7 +434,23 @@ export default function TranslateView() {
                 </div>
 
                 {/* Casual Translation */}
-                <p className="text-xl font-semibold text-white leading-relaxed mb-4">{casualAlternative}</p>
+                <p className="text-xl font-semibold text-white leading-relaxed">{casualAlternative}</p>
+
+                {/* Casual Back Translation */}
+                {casualBackTranslation && (
+                  <p className="text-sm text-white/40 mt-1 mb-3">
+                    <span className="text-white/30 mr-1">↳</span>
+                    &ldquo;{casualBackTranslation}&rdquo;
+                  </p>
+                )}
+
+                {/* Casual Learning Notes */}
+                {casualNotes && (
+                  <div className="mt-3 pt-3 border-t border-white/10">
+                    <h4 className="text-xs font-semibold text-white/40 mb-2 uppercase tracking-wide">Learning Notes</h4>
+                    <p className="text-sm text-white/70 leading-relaxed whitespace-pre-line">{casualNotes}</p>
+                  </div>
+                )}
 
                 {/* Casual Examples */}
                 {casualExamples && casualExamples.length > 0 && (
