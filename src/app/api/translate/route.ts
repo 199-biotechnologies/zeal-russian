@@ -107,33 +107,81 @@ export async function POST(request: NextRequest) {
     const responseContent = completion.choices?.[0]?.message?.content || '{}';
     console.log('Raw LLM response:', responseContent);
 
-    let parsedResponse;
+    interface TranslationResponse {
+      translation?: string;
+      casual_alternative?: string;
+      examples?: Array<{ text: string; english: string }>;
+      casual_examples?: Array<{ text: string; english: string }>;
+    }
 
-    try {
-      let jsonContent = responseContent.trim();
+    let parsedResponse: TranslationResponse;
 
-      // Extract JSON from markdown code blocks if present (handles text before/after)
-      const jsonBlockMatch = jsonContent.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (jsonBlockMatch) {
-        jsonContent = jsonBlockMatch[1].trim();
+    // Helper to try parsing JSON from a string
+    const tryParseJSON = (str: string): TranslationResponse | null => {
+      try {
+        return JSON.parse(str) as TranslationResponse;
+      } catch {
+        return null;
+      }
+    };
+
+    // Helper to extract and parse JSON with multiple strategies
+    const extractJSON = (content: string): TranslationResponse | null => {
+      const trimmed = content.trim();
+
+      // Strategy 1: Direct parse (clean JSON)
+      let result = tryParseJSON(trimmed);
+      if (result) return result;
+
+      // Strategy 2: Extract from markdown code block with greedy match
+      const codeBlockMatch = trimmed.match(/```(?:json)?[\s\n]*([\s\S]*?)[\s\n]*```/);
+      if (codeBlockMatch) {
+        result = tryParseJSON(codeBlockMatch[1].trim());
+        if (result) return result;
       }
 
-      // Also try to extract raw JSON object if no code block found
-      if (!jsonBlockMatch) {
-        const jsonObjectMatch = jsonContent.match(/\{[\s\S]*\}/);
-        if (jsonObjectMatch) {
-          jsonContent = jsonObjectMatch[0];
-        }
+      // Strategy 3: Find JSON object between first { and last }
+      const firstBrace = trimmed.indexOf('{');
+      const lastBrace = trimmed.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace > firstBrace) {
+        const jsonCandidate = trimmed.slice(firstBrace, lastBrace + 1);
+        result = tryParseJSON(jsonCandidate);
+        if (result) return result;
       }
 
-      parsedResponse = JSON.parse(jsonContent);
-    } catch (e) {
-      console.error('JSON parse error:', e);
-      console.error('Failed to parse:', responseContent);
+      // Strategy 4: Remove common prefixes/suffixes and try again
+      const cleaned = trimmed
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/\s*```$/i, '')
+        .replace(/\*\*Note:[\s\S]*$/i, '')  // Remove trailing notes
+        .trim();
 
-      // Fallback - treat entire response as translation
+      result = tryParseJSON(cleaned);
+      if (result) return result;
+
+      // Strategy 5: Try extracting from cleaned content
+      const cleanedFirstBrace = cleaned.indexOf('{');
+      const cleanedLastBrace = cleaned.lastIndexOf('}');
+      if (cleanedFirstBrace !== -1 && cleanedLastBrace > cleanedFirstBrace) {
+        result = tryParseJSON(cleaned.slice(cleanedFirstBrace, cleanedLastBrace + 1));
+        if (result) return result;
+      }
+
+      return null;
+    };
+
+    const extracted = extractJSON(responseContent);
+
+    if (extracted) {
+      parsedResponse = extracted;
+    } else {
+      console.error('All JSON extraction strategies failed');
+      console.error('Raw response:', responseContent);
+
+      // Ultimate fallback - return a basic response
       parsedResponse = {
-        translation: responseContent,
+        translation: 'Translation parsing failed. Please try again.',
         examples: []
       };
     }
